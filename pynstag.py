@@ -5,17 +5,19 @@ import numpy as np
 import cv2
 
 
+targetRatio = 1 #4/5
+targetResX = 1080
+targetResY = 1080 #1350
+downsize = True
+
 def pad_image_cv2(image_path, output_path, color=[255,255,255]):
     """
     Color is in BGR format by default for OpenCV.
-    target: 1080x1350
     """
     img = cv2.imread(image_path)
     h, w = img.shape[:2]
 
-    # Calculate padding needed to make it 4:5
-
-    targetRatio = 4/5
+    # Calculate padding needed to make it as necessary
     currentRatio = w/h
 
     # image is too wide, add vertically
@@ -44,7 +46,10 @@ def pad_image_cv2(image_path, output_path, color=[255,255,255]):
     )
 
     # Resize the final padded image to 1080x1080
-    final_img = cv2.resize(padded_img, (1080, 1350), interpolation=cv2.INTER_AREA)
+    if downsize:
+        final_img = cv2.resize(padded_img, (targetResX, targetResY), interpolation=cv2.INTER_AREA)
+    else:
+        final_img = padded_img 
 
     cv2.imwrite(output_path, final_img)
     #print(f"Image saved to {output_path}")
@@ -55,7 +60,13 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(script_dir)
 
 #make new dir
-os.makedirs('instaReady', exist_ok=True)
+dirName = 'instaReady'
+if targetRatio == 1:
+    dirName =+ '1x1'
+else:
+    dirName =+ '4x5'
+
+os.makedirs(dirName, exist_ok=True)
 
 # Pattern to find all files ending with .jpg or .jpeg (case-insensitive)
 # The glob.glob() function returns a list of file paths that match the pattern.
