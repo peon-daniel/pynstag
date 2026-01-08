@@ -1,0 +1,7 @@
+/build
+/dist
+/pynstag.spec
+/startVShere.cmd
+/venv
+/_exclude
+/__pycache__
